@@ -9,19 +9,18 @@ import logging
 from okr import Proposition
 from constants import NULL_VALUE
 
-
 # Return a graph with only the verbal proposition in the input graph
-filter_verbal = lambda(test_graph): \
-                filter_proposition_mentions(verbal_filter,
-                                            test_graph)
+filter_verbal = lambda (test_graph): \
+    filter_proposition_mentions(verbal_filter,
+                                test_graph)
 
 # Return a graph with only the non-verbal propositions in the input graph
-filter_non_verbal = lambda(test_graph): \
-                    filter_proposition_mentions(lambda sentence, mention: not(verbal_filter(sentence, mention)),
-                                                test_graph)
+filter_non_verbal = lambda (test_graph): \
+    filter_proposition_mentions(lambda sentence, mention: not (verbal_filter(sentence, mention)),
+                                test_graph)
 
 verbal_filter = lambda sentence, mention: (len(mention.indices) == 1) and \
-                                            (nltk.pos_tag(sentence)[mention.indices[0]][1].startswith('V'))
+                                          (nltk.pos_tag(sentence)[mention.indices[0]][1].startswith('V'))
 
 
 def filter_proposition_mentions(filter_func, test_graph):
@@ -51,10 +50,10 @@ def cram_proposition_mentions(proposition_mentions):
     Since it doesn't matter for agreement computation
     :param proposition_mentions the proposition mentions
     """
-    return {0 : Proposition(id = NULL_VALUE,
-                            name = NULL_VALUE,
-                            mentions = dict(zip(range(len(proposition_mentions)),
-                                                proposition_mentions)),
-                            attributor = NULL_VALUE,
-                            terms = NULL_VALUE,
-                            entailment_graph = NULL_VALUE)}
+    return {0: Proposition(id=NULL_VALUE,
+                           name=NULL_VALUE,
+                           mentions=dict(zip(range(len(proposition_mentions)),
+                                             proposition_mentions)),
+                           attributor=NULL_VALUE,
+                           terms=NULL_VALUE,
+                           entailment_graph=NULL_VALUE)}

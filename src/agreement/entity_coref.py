@@ -55,16 +55,16 @@ def compute_entity_coref_agreement(graph1, graph2):
     m = Munkres()
     cost = pad_to_square(cost)
     indices = m.compute(cost)
-    optimal_alignment = { row : col for row, col in indices }
-    rev_optimal_alignment = { col : row for row, col in indices }
+    optimal_alignment = {row: col for row, col in indices}
+    rev_optimal_alignment = {col: row for row, col in indices}
 
-    s1_to_s2 = { graph1.entities.keys()[i] : s1.intersection(graph2_ent_mentions[optimal_alignment[i]])
-                 for i, s1 in enumerate(graph1_ent_mentions)
-                 if optimal_alignment[i] < len(graph2_ent_mentions) }
+    s1_to_s2 = {graph1.entities.keys()[i]: s1.intersection(graph2_ent_mentions[optimal_alignment[i]])
+                for i, s1 in enumerate(graph1_ent_mentions)
+                if optimal_alignment[i] < len(graph2_ent_mentions)}
 
-    s2_to_s1 = { graph2.entities.keys()[i] : s2.intersection(graph1_ent_mentions[rev_optimal_alignment[i]])
-                 for i, s2 in enumerate(graph2_ent_mentions)
-                 if rev_optimal_alignment[i] < len(graph1_ent_mentions) }
+    s2_to_s1 = {graph2.entities.keys()[i]: s2.intersection(graph1_ent_mentions[rev_optimal_alignment[i]])
+                for i, s2 in enumerate(graph2_ent_mentions)
+                if rev_optimal_alignment[i] < len(graph1_ent_mentions)}
 
     consensual_graph1 = filter_clusters(graph1, s1_to_s2)
     consensual_graph2 = filter_clusters(graph2, s2_to_s1)
@@ -127,7 +127,7 @@ def muc_micro(gold_mentions, response_mentions):
     precision_num = len(intersection)
     precision_den = len(response_links)
 
-    return recall_num,recall_den,precision_num,precision_den
+    return recall_num, recall_den, precision_num, precision_den
 
 
 def bcubed(gold_mentions, response_mentions):
@@ -144,10 +144,10 @@ def bcubed(gold_mentions, response_mentions):
     :param response_mentions: a set of response entities, with each entity comprising one or more mentions
     :return: The F1 score computed by B-CUBED
     """
-    mention_to_entity_gold = { str(mention) : i for i, mention_set in enumerate(gold_mentions)
-                               for mention in mention_set }
-    mention_to_entity_response = { str(mention) : i for i, mention_set in enumerate(response_mentions)
-                                   for mention in mention_set }
+    mention_to_entity_gold = {str(mention): i for i, mention_set in enumerate(gold_mentions)
+                              for mention in mention_set}
+    mention_to_entity_response = {str(mention): i for i, mention_set in enumerate(response_mentions)
+                                  for mention in mention_set}
 
     per_mention_recall = []
     per_mention_precision = []
@@ -177,10 +177,10 @@ def bcubed_micro(gold_mentions, response_mentions):
     :param response_mentions: a set of response entities, with each entity comprising one or more mentions
     :return: recall_num, recall_den, prec_num, prec_den
     """
-    mention_to_entity_gold = { str(mention) : i for i, mention_set in enumerate(gold_mentions)
-                               for mention in mention_set }
-    mention_to_entity_response = { str(mention) : i for i, mention_set in enumerate(response_mentions)
-                                   for mention in mention_set }
+    mention_to_entity_gold = {str(mention): i for i, mention_set in enumerate(gold_mentions)
+                              for mention in mention_set}
+    mention_to_entity_response = {str(mention): i for i, mention_set in enumerate(response_mentions)
+                                  for mention in mention_set}
 
     per_mention_recall = []
     per_mention_precision = []
@@ -319,8 +319,8 @@ def filter_clusters(graph, consensual_clusters):
             continue
 
         # Filter mentions
-        entity.mentions = { id : mention for id, mention in entity.mentions.iteritems()
-                            if str(mention) in consensual_clusters[entity_id] }
+        entity.mentions = {id: mention for id, mention in entity.mentions.iteritems()
+                           if str(mention) in consensual_clusters[entity_id]}
 
         # Remove them also from the entailment graph
         entity.entailment_graph.mentions_graph = [(m1, m2) for (m1, m2)
@@ -333,7 +333,7 @@ def filter_clusters(graph, consensual_clusters):
             removed.append(entity_id)
 
     # Remove entities without mentions
-    consensual_graph.entities = { entity_id : entity for entity_id, entity in consensual_graph.entities.items()
-                                  if entity_id not in removed }
+    consensual_graph.entities = {entity_id: entity for entity_id, entity in consensual_graph.entities.items()
+                                 if entity_id not in removed}
 
     return consensual_graph

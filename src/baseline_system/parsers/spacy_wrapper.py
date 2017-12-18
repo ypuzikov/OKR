@@ -10,24 +10,24 @@ from spacy.en import English
 from spacy.tokens import Span
 from collections import defaultdict
 
-
-logging.basicConfig(level = logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class spacy_wrapper:
     """
     Abstraction over the spaCy parser, all output uses word indexes. Also offers VP and NP chunking as spaCy primitives.
     """
+
     def __init__(self):
         self.nlp = English()
         self.idx_to_word_index = {}
-         
+
     def parse(self, sent):
         """
         Parse a raw sentence - shouldn't return a value, but properly change the internal status
         :param sent - a raw sentence
         """
-        self.toks = self.nlp(unicode(sent, errors = 'ignore'))
+        self.toks = self.nlp(unicode(sent, errors='ignore'))
         self.idx_to_word_index = self.get_idx_to_word_index()
 
     def get_sents(self):
@@ -36,7 +36,7 @@ class spacy_wrapper:
         :return: a list of sentences
         """
         return [s for s in self.parser.sents]
-        
+
     def chunk(self):
         """
         Run all chunking on the current sentence
@@ -52,7 +52,7 @@ class spacy_wrapper:
         """
         for np in self.toks.noun_chunks:
             np.merge(np.root.tag_, np.text, np.root.ent_type_)
-            
+
         # Update mappings
         self.idx_to_word_index = self.get_idx_to_word_index()
 
@@ -60,20 +60,21 @@ class spacy_wrapper:
         """
         Verb phrase chunking - head is a verb and children are auxiliaries
         """
-        self.chunk_by_filters(head_filter = lambda head: self.is_verb(head),
-                              child_filter = lambda child: self.is_aux(child) and len(self.get_children(child)) == 0)
-        
+        self.chunk_by_filters(head_filter=lambda head: self.is_verb(head),
+                              child_filter=lambda child: self.is_aux(child) and len(self.get_children(child)) == 0)
+
     def pp_chunk(self):
         """
         PP phrase chunking - head is a PP with a single PP child
         """
+
         def pp_head_filter(head):
             if not self.is_prep(head): return False
             children = self.get_children(head)
             if len(children) != 1: return False
             return self.is_prep(children[0])
-                
-        self.chunk_by_filters(head_filter = pp_head_filter, child_filter = lambda child: self.is_prep(child))
+
+        self.chunk_by_filters(head_filter=pp_head_filter, child_filter=lambda child: self.is_prep(child))
 
     def chunk_by_filters(self, head_filter, child_filter):
         """
@@ -104,9 +105,8 @@ class spacy_wrapper:
 
         # Merge Spans to chunks, this is done after creating all Span objects to avoid index changing while iterating
         for head, (chunk, chunkLemma) in chunks.iteritems():
-
             # set the span's lemma
-            chunk.merge(chunk.root.tag_, chunkLemma, chunk.root.ent_type_) # tag, lemma, ent_type
+            chunk.merge(chunk.root.tag_, chunkLemma, chunk.root.ent_type_)  # tag, lemma, ent_type
 
         # Update mappings
         self.idx_to_word_index = self.get_idx_to_word_index()
@@ -149,7 +149,7 @@ class spacy_wrapper:
         :return: the surface form of token at index ind
         """
         return self.toks[ind].lemma_
-    
+
     def get_head(self, ind):
         """
         Return the word index of the head of of token at index ind
@@ -182,7 +182,7 @@ class spacy_wrapper:
         :return: the end character index of this word
         """
         return self.toks[ind].idx + len(self.get_word(ind))
-        
+
     def is_root(self, ind):
         """
         Returns True iff the token at index ind is the head of this tree
@@ -190,7 +190,7 @@ class spacy_wrapper:
         :return: True iff the token at index ind is the head of this tree
         """
         return (self.toks[ind].head is self.toks[ind])
-    
+
     def get_len(self):
         """
         Returns the number of tokens in the current sentence
@@ -284,7 +284,7 @@ class spacy_wrapper:
         """
         return self.toks[ind].text
 
-        
+
 def consecutive(span):
     """
     Check if a span of indices is consecutive

@@ -80,13 +80,16 @@ class EntityEntailmentBaseline:
 
         # Partial entailment with equivalence, e.g. 'two girls' -> 'two kids':
         if len(ent1_words) > 1 and len(ent2_words) > 1 and \
-            (ent1_words[:-1] == ent2_words[:-1] and self.full_entailment(ent1_words[-1], ent2_words[-1]) or \
-            ent1_words[1:] == ent2_words[1:] and self.full_entailment(ent1_words[0], ent2_words[0])):
+                (ent1_words[:-1] == ent2_words[:-1] and self.full_entailment(ent1_words[-1], ent2_words[-1]) or \
+                                 ent1_words[1:] == ent2_words[1:] and self.full_entailment(ent1_words[0],
+                                                                                           ent2_words[0])):
             return True
 
         # Person name (simplified co-reference)
-        if ((self.full_entailment(entity1, 'person') or self.full_entailment(entity1, 'human') and entity2 in entity1) or
-            (self.full_entailment(entity2, 'person') or self.full_entailment(entity2, 'human') and entity1 in entity2)):
+        if ((self.full_entailment(entity1, 'person') or self.full_entailment(entity1,
+                                                                             'human') and entity2 in entity1) or
+                (self.full_entailment(entity2, 'person') or self.full_entailment(entity2,
+                                                                                 'human') and entity1 in entity2)):
             return True
 
         return False
@@ -99,10 +102,10 @@ class EntityEntailmentBaseline:
         :return:
         """
         return (entity1 in self.resource_entailments and entity2 in self.resource_entailments[entity1]) or \
-           (entity1 in self.hypenet_unigrams and entity2 in self.hypenet_unigrams[entity1]
-            and float(self.hypenet_unigrams[entity1][entity2]) >= self.unigram_threshold) or \
-           (entity1 in self.hypenet_ngrams and entity2 in self.hypenet_ngrams[entity1]
-            and float(self.hypenet_ngrams[entity1][entity2]) >= self.ngram_threshold)
+               (entity1 in self.hypenet_unigrams and entity2 in self.hypenet_unigrams[entity1]
+                and float(self.hypenet_unigrams[entity1][entity2]) >= self.unigram_threshold) or \
+               (entity1 in self.hypenet_ngrams and entity2 in self.hypenet_ngrams[entity1]
+                and float(self.hypenet_ngrams[entity1][entity2]) >= self.ngram_threshold)
 
 
 def load_resource_with_score(resource_file):
@@ -112,8 +115,8 @@ def load_resource_with_score(resource_file):
     :return: a dictionary from word to dictionary of word to score
     """
     db = bsddb.btopen(resource_file, 'r')
-    resource = { x : { item.split(':')[0] : float(item.split(':')[1]) for item in ys.split('##') }
-                 for x, ys in db.iteritems() }
+    resource = {x: {item.split(':')[0]: float(item.split(':')[1]) for item in ys.split('##')}
+                for x, ys in db.iteritems()}
     return resource
 
 
@@ -124,5 +127,5 @@ def load_resource(resource_file):
     :return: a dictionary from word to set of words
     """
     db = bsddb.btopen(resource_file)
-    resource = { x : set(ys.split('##')) for x, ys in db.iteritems() }
+    resource = {x: set(ys.split('##')) for x, ys in db.iteritems()}
     return resource

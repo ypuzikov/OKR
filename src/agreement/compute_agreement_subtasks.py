@@ -13,6 +13,7 @@ Author: Vered Shwartz
 """
 import os
 import sys
+
 sys.path.append('../common')
 
 import numpy as np
@@ -65,7 +66,8 @@ def main():
     results = []
     for annotator1_file, annotator2_file in zip(annotator1_files, annotator2_files):
         print 'Agreement for %s, %s' % (annotator1_dir + '/' + annotator1_file, annotator2_dir + '/' + annotator2_file)
-        results.append(compute_agreement(annotator1_dir + '/' + annotator1_file, annotator2_dir + '/' + annotator2_file))
+        results.append(
+            compute_agreement(annotator1_dir + '/' + annotator1_file, annotator2_dir + '/' + annotator2_file))
 
     average = np.mean(results, axis=0)
     ent_score, ent_muc, ent_b_cube, ent_ceaf_c, ent_mela, \
@@ -113,7 +115,8 @@ def compute_agreement(annotator1_file, annotator2_file):
     # in which both annotators agreed on the entity clusters
     ent_muc, ent_b_cube, ent_ceaf_c, ent_conll_f1, consensual_graph1, consensual_graph2 = \
         compute_entity_coref_agreement(consensual_graph1, consensual_graph2)
-    print 'Entity coreference: MUC=%.3f, B^3=%.3f, CEAF_C=%.3f, MELA=%.3f' % (ent_muc, ent_b_cube, ent_ceaf_c, ent_conll_f1)
+    print 'Entity coreference: MUC=%.3f, B^3=%.3f, CEAF_C=%.3f, MELA=%.3f' % (
+    ent_muc, ent_b_cube, ent_ceaf_c, ent_conll_f1)
 
     # Compute agreement for predicate mentions and update the graphs to contain only annotations
     # in which both annotators agreed on the predicate mentions
@@ -123,7 +126,7 @@ def compute_agreement(annotator1_file, annotator2_file):
     pred_mention_verbal_score = compute_predicate_mention_agreement_verbal(consensual_graph1, consensual_graph2)
 
     pred_mention_score, consensual_graph1, consensual_graph2 = compute_predicate_mention_agreement(consensual_graph1,
-                                                                                      consensual_graph2)
+                                                                                                   consensual_graph2)
 
     print 'Predicate mentions: %.3f, verbal: %.3f, non-verbal: %.3f' % (pred_mention_score,
                                                                         pred_mention_verbal_score,
@@ -131,20 +134,22 @@ def compute_agreement(annotator1_file, annotator2_file):
 
     # Compute agreement for predicate coreference and update the graphs to contain only annotations
     # in which both annotators agreed on the predicate clusters
-    pred_muc, pred_b_cube, pred_ceaf_c, pred_conll_f1, consensual_graph1, consensual_graph2,optimal_alignment = \
+    pred_muc, pred_b_cube, pred_ceaf_c, pred_conll_f1, consensual_graph1, consensual_graph2, optimal_alignment = \
         compute_predicate_coref_agreement(consensual_graph1, consensual_graph2)
-    print 'Predicate coreference: MUC=%.3f, B^3=%.3f, CEAF_C=%.3f, MELA=%.3f' % (pred_muc, pred_b_cube, pred_ceaf_c, pred_conll_f1)
+    print 'Predicate coreference: MUC=%.3f, B^3=%.3f, CEAF_C=%.3f, MELA=%.3f' % (
+    pred_muc, pred_b_cube, pred_ceaf_c, pred_conll_f1)
 
     # Compute agreement for argument mention within predicate chains and update the graphs to contain only annotations
     # in which both annotators agreed on the argument mentions
-    arg_mention_score, consensual_graph1, consensual_graph2= compute_argument_mention_agreement(consensual_graph1,
-                                                                                                consensual_graph2)
+    arg_mention_score, consensual_graph1, consensual_graph2 = compute_argument_mention_agreement(consensual_graph1,
+                                                                                                 consensual_graph2)
     print 'Argument mentions: %.3f' % arg_mention_score
-	
-    #Compute coreference scores for alignement between arguments of the same propositions:
+
+    # Compute coreference scores for alignement between arguments of the same propositions:
     arg_muc, arg_b_cube, arg_ceaf_c, arg_conll_f1, consensual_graph1, consensual_graph2 = \
-        compute_argument_coref_agreement(consensual_graph1, consensual_graph2,optimal_alignment)
-    print 'Argument coreference: MUC=%.3f, B^3=%.3f, CEAF_C=%.3f, MELA=%.3f' % (arg_muc, arg_b_cube, arg_ceaf_c, arg_conll_f1)
+        compute_argument_coref_agreement(consensual_graph1, consensual_graph2, optimal_alignment)
+    print 'Argument coreference: MUC=%.3f, B^3=%.3f, CEAF_C=%.3f, MELA=%.3f' % (
+    arg_muc, arg_b_cube, arg_ceaf_c, arg_conll_f1)
 
     # Compute agreement for the entailment graph and update the graphs to contain only annotations
     # in which both annotators agreed on the edges (propositions, arguments and entities)
@@ -156,7 +161,7 @@ def compute_agreement(annotator1_file, annotator2_file):
             pred_mention_score, pred_mention_verbal_score, pred_mention_non_verbal_score,
             pred_muc, pred_b_cube, pred_ceaf_c, pred_conll_f1,
             arg_mention_score, arg_muc, arg_b_cube, arg_ceaf_c, arg_conll_f1,
-            entities_f1,  propositions_f1]
+            entities_f1, propositions_f1]
 
 
 if __name__ == '__main__':

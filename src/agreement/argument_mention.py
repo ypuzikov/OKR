@@ -49,10 +49,10 @@ def filter_mentions(graph, consensual_mentions):
 
     for prop in consensual_graph.propositions.values():
         for mention in prop.mentions.values():
-            mention.argument_mentions = { id : arg_mention for id, arg_mention in mention.argument_mentions.iteritems()
-                                          if arg_mention.str_p(mention) in consensual_mentions }
+            mention.argument_mentions = {id: arg_mention for id, arg_mention in mention.argument_mentions.iteritems()
+                                         if arg_mention.str_p(mention) in consensual_mentions}
 
-        # TODO: consensual argument entailment is missing!
+            # TODO: consensual argument entailment is missing!
 
     return consensual_graph
 
@@ -66,13 +66,15 @@ def extract_consensual_mentions(graph1, graph2):
     """
 
     # Get the argument mentions in both graphs
-    graph1_arg_mentions = set.union(*[set.union(*[set([arg.str_p(mention) for arg in mention.argument_mentions.values()])
-                                                  for mention in  prop.mentions.values()])
-                                      for prop in graph1.propositions.values()])
+    graph1_arg_mentions = set.union(
+        *[set.union(*[set([arg.str_p(mention) for arg in mention.argument_mentions.values()])
+                      for mention in prop.mentions.values()])
+          for prop in graph1.propositions.values()])
 
-    graph2_arg_mentions = set.union(*[set.union(*[set([arg.str_p(mention) for arg in mention.argument_mentions.values()])
-                                                  for mention in  prop.mentions.values()])
-                                      for prop in graph2.propositions.values()])
+    graph2_arg_mentions = set.union(
+        *[set.union(*[set([arg.str_p(mention) for arg in mention.argument_mentions.values()])
+                      for mention in prop.mentions.values()])
+          for prop in graph2.propositions.values()])
 
     # Exclude sentence that weren't anotated by both:
     common_sentences = set([x.split('[')[0] for x in graph1_arg_mentions]).intersection(
@@ -90,4 +92,3 @@ def extract_consensual_mentions(graph1, graph2):
     consensual_mentions = graph1_arg_mentions.intersection(graph2_arg_mentions)
 
     return consensual_mentions, graph1_arg_mentions, graph2_arg_mentions
-

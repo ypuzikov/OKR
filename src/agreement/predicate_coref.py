@@ -32,8 +32,10 @@ def compute_predicate_coref_agreement(graph1, graph2):
     # Get predicate mentions
     # TODO: currently there is a problem with predicates that participate in more than one proposition: they
     # are only counted once. We need to find a way to represent them.
-    graph1_pred_mentions = [set(map(str, proposition.mentions.values())) for proposition in graph1.propositions.values()]
-    graph2_pred_mentions = [set(map(str, proposition.mentions.values())) for proposition in graph2.propositions.values()]
+    graph1_pred_mentions = [set(map(str, proposition.mentions.values())) for proposition in
+                            graph1.propositions.values()]
+    graph2_pred_mentions = [set(map(str, proposition.mentions.values())) for proposition in
+                            graph2.propositions.values()]
 
     # Compute twice, each time considering a different annotator as the gold, and return the average among
     # each measure
@@ -59,19 +61,19 @@ def compute_predicate_coref_agreement(graph1, graph2):
     m = Munkres()
     cost = pad_to_square(cost)
     indices = m.compute(cost)
-    rev_optimal_alignment = { row : col for row, col in indices }
-    optimal_alignment = { col : row for row, col in indices }
-    id_alignment= { graph1.propositions.keys()[k] : graph2.propositions.keys()[v]
+    rev_optimal_alignment = {row: col for row, col in indices}
+    optimal_alignment = {col: row for row, col in indices}
+    id_alignment = {graph1.propositions.keys()[k]: graph2.propositions.keys()[v]
                     for k, v in optimal_alignment.iteritems()
-                    if k < len(graph1.propositions) and v < len(graph2.propositions) }
+                    if k < len(graph1.propositions) and v < len(graph2.propositions)}
 
-    s1_to_s2 = { graph1.propositions.keys()[i] : s1.intersection(graph2_pred_mentions[optimal_alignment[i]])
-                 for i, s1 in enumerate(graph1_pred_mentions)
-                 if optimal_alignment[i] < len(graph2_pred_mentions) }
+    s1_to_s2 = {graph1.propositions.keys()[i]: s1.intersection(graph2_pred_mentions[optimal_alignment[i]])
+                for i, s1 in enumerate(graph1_pred_mentions)
+                if optimal_alignment[i] < len(graph2_pred_mentions)}
 
-    s2_to_s1 = { graph2.propositions.keys()[i] : s2.intersection(graph1_pred_mentions[rev_optimal_alignment[i]])
-                 for i, s2 in enumerate(graph2_pred_mentions)
-                 if rev_optimal_alignment[i] < len(graph1_pred_mentions) }
+    s2_to_s1 = {graph2.propositions.keys()[i]: s2.intersection(graph1_pred_mentions[rev_optimal_alignment[i]])
+                for i, s2 in enumerate(graph2_pred_mentions)
+                if rev_optimal_alignment[i] < len(graph1_pred_mentions)}
 
     consensual_graph1 = filter_clusters(graph1, s1_to_s2)
     consensual_graph2 = filter_clusters(graph2, s2_to_s1)
@@ -97,21 +99,21 @@ def filter_clusters(graph, consensual_clusters):
             continue
 
         # Filter mentions
-        prop.mentions = { id : mention for id, mention in prop.mentions.iteritems()
-                            if str(mention) in consensual_clusters[prop_id] }
+        prop.mentions = {id: mention for id, mention in prop.mentions.iteritems()
+                         if str(mention) in consensual_clusters[prop_id]}
 
         # Remove them also from the entailment graph
         prop.entailment_graph.mentions_graph = [(m1, m2) for (m1, m2)
-                                                  in prop.entailment_graph.mentions_graph
-                                                  if m1 in consensual_clusters[prop_id]
-                                                  and m2 in consensual_clusters[prop_id]]
+                                                in prop.entailment_graph.mentions_graph
+                                                if m1 in consensual_clusters[prop_id]
+                                                and m2 in consensual_clusters[prop_id]]
 
         # Remove propositions without mentions
         if len(prop.mentions) == 0:
             removed.append(prop_id)
 
     # Remove propositions without mentions
-    consensual_graph.propositions = { entity_id : entity for entity_id, entity in consensual_graph.propositions.items()
-                                  if entity_id not in removed }
+    consensual_graph.propositions = {entity_id: entity for entity_id, entity in consensual_graph.propositions.items()
+                                     if entity_id not in removed}
 
     return consensual_graph

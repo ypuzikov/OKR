@@ -15,6 +15,7 @@ class OKR:
     """
     A class for the OKR graph structure
     """
+
     def __init__(self, name, sentences, ignored_indices, tweet_ids, entities, propositions):
 
         self.name = name  # XML file name
@@ -241,14 +242,14 @@ def load_graph_from_file(input_file):
 
     # Handle different versions - old version:
     if sentences_node[0].find('str') != None:
-        sentences = { int(sentence.find('id').text): sentence.find('str').text.split() for sentence in sentences_node }
+        sentences = {int(sentence.find('id').text): sentence.find('str').text.split() for sentence in sentences_node}
         ignored_indices = None
         tweet_ids = {}
 
     # New version
     else:
-        sentences = { int(sentence.find('id').text) : [token.find('str').text for token in sentence.find('tokens')]
-                     for sentence in sentences_node }
+        sentences = {int(sentence.find('id').text): [token.find('str').text for token in sentence.find('tokens')]
+                     for sentence in sentences_node}
         ignored_indices = set(
             [sentence.find('id').text + '[' + token.find('id').text + ']' for sentence in sentences_node
              for token in sentence.find('tokens') if token.find('isIrrelevant').text == 'true'])
@@ -320,10 +321,12 @@ def load_graph_from_file(input_file):
         mentions = {int(mention.find('id').text):  # mention id
                         PropositionMention(int(mention.find('id').text),  # mention id
                                            int(mention.find('sentenceId').text),  # sentence id
-                                           [int(index.find('ind').text) for index in mention.find('tokens')], # mention indices
+                                           [int(index.find('ind').text) for index in mention.find('tokens')],
+                                           # mention indices
 
                                            # mention terms
-                                           ' '.join([index.find('word').text.lower() for index in mention.find('tokens')]),
+                                           ' '.join(
+                                               [index.find('word').text.lower() for index in mention.find('tokens')]),
 
                                            int(proposition[0].text),  # parent
 
@@ -361,7 +364,7 @@ def load_graph_from_file(input_file):
 
             entailment_info = proposition[4]
             prop_terms = entailment_info[0]
-            term_dic = { int(term[0].text) : term[1].text.lower() for term in prop_terms }
+            term_dic = {int(term[0].text): term[1].text.lower() for term in prop_terms}
             graph = []
             contradictions_graph = []
             prop_connections = entailment_info[1]
@@ -391,7 +394,7 @@ def load_graph_from_file(input_file):
                                                              proposition[1].text,  # name
                                                              mentions,  # proposition mentions
                                                              proposition[2].text,  # attributor
-                                                             terms, proposition_entailment # predicate entailment graph
+                                                             terms, proposition_entailment  # predicate entailment graph
                                                              )
 
     okr = OKR(input_file, sentences, ignored_indices, tweet_ids, entities, propositions)
@@ -457,7 +460,7 @@ def set_parent_indices(arg, graph):
         # Parent mention ID is missing in the graph
         if arg.parent_mention_id not in graph.entities[arg.parent_id].mentions:
             warning = 'Error: missing parent ID %s.%s [%s] for entity argument %s [%s]' % \
-                  (arg.parent_id, arg.parent_mention_id, graph.entities[arg.parent_id].terms, arg.id, arg.desc)
+                      (arg.parent_id, arg.parent_mention_id, graph.entities[arg.parent_id].terms, arg.id, arg.desc)
             logging.warn(warning)
 
         else:
@@ -470,7 +473,7 @@ def set_parent_indices(arg, graph):
         # Parent mention ID is missing in the graph
         if arg.parent_mention_id not in graph.propositions[arg.parent_id].mentions:
             warning = 'Error: missing parent ID %s.%s [%s] for proposition argument %s [%s]' % \
-                  (arg.parent_id, arg.parent_mention_id, graph.propositions[arg.parent_id].terms, arg.id, arg.desc)
+                      (arg.parent_id, arg.parent_mention_id, graph.propositions[arg.parent_id].terms, arg.id, arg.desc)
             logging.warn(warning)
 
         else:

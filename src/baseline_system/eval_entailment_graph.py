@@ -10,6 +10,7 @@ Author: Vered Shwartz
 """
 
 import sys
+
 sys.path.append('../agreement')
 
 import numpy as np
@@ -45,7 +46,7 @@ def evaluate_predicate_entailment(val_graphs, test_graphs):
 
     # Tune the threshold for the validation set
     print 'Tuning the threshold...'
-    thresholds = [-10000.0] # [-10000.0, 10000.0] + [-4 + 0.1 * i for i in range(80)]
+    thresholds = [-10000.0]  # [-10000.0, 10000.0] + [-4 + 0.1 * i for i in range(80)]
     f1_scores = []
 
     for threshold in thresholds:
@@ -111,8 +112,8 @@ def evaluate_entity_entailment(val_graphs, test_graphs):
 
     # Tune the threshold for the validation set
     print 'Tuning the threshold...'
-    unigram_thresholds = [0.5] # [0.5 + 0.01 * i for i in range(50)]
-    ngram_thresholds = [0.5] # [0.5 + 0.01 * i for i in range(50)]
+    unigram_thresholds = [0.5]  # [0.5 + 0.01 * i for i in range(50)]
+    ngram_thresholds = [0.5]  # [0.5 + 0.01 * i for i in range(50)]
     thresholds = [(u, n) for u in unigram_thresholds for n in ngram_thresholds]
     f1_scores = []
 

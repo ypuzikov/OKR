@@ -24,13 +24,15 @@ from clustering_common import cluster_mentions
 # Don't use spacy tokenizer, because we originally used NLTK to tokenize the files and they are already tokenized
 nlp = spacy.load('en')
 
+
 def is_stop(w):
-	return w in spacy.en.STOP_WORDS
+    return w in spacy.en.STOP_WORDS
 
 
 def replace_tokenizer(nlp):
     old_tokenizer = nlp.tokenizer
     nlp.tokenizer = lambda string: old_tokenizer.tokens_from_list(string.split())
+
 
 replace_tokenizer(nlp)
 
@@ -44,7 +46,6 @@ def evaluate_entity_coref(test_graphs):
     scores = []
 
     for graph in test_graphs:
-
         # Cluster the entities
         entities = [(str(mention), unicode(mention.terms)) for entity in graph.entities.values() for mention in
                     entity.mentions.values()]

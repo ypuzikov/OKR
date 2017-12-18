@@ -6,6 +6,7 @@ Author: Shyam Upadhyay
 """
 
 import sys
+
 sys.path.append('../common')
 
 import numpy as np

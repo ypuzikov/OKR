@@ -7,6 +7,7 @@ Author: Shyam Upadhyay
 """
 
 import sys
+
 sys.path.append('../common')
 
 from okr import *
@@ -27,10 +28,9 @@ def evaluate_argument_coref(test_graphs):
 
         arg_clustering = {}
         for prop_id, prop in graph.propositions.iteritems():
-
             # Cluster the arguments
             all_args = [arg for mention in prop.mentions.values() for arg in mention.argument_mentions.values()]
-            score = lambda mention, cluster : same_entity(cluster, mention, graph)
+            score = lambda mention, cluster: same_entity(cluster, mention, graph)
             clusters = cluster_mentions(all_args, score)
             clusters = [set([str(mention) for mention in cluster]) for cluster in clusters]
             arg_clustering[prop_id] = clusters
@@ -55,16 +55,16 @@ def eval_clusters(gold, arg_clustering):
     """
 
     # Get argument mentions
-    gold_arg_mentions_dicts = { prop_id : [{ m_id : str(mention)
-                                               for m_id, mention in mention.argument_mentions.iteritems()}
-                                             for mention in prop.mentions.values()]
-                                  for prop_id, prop in gold.propositions.iteritems() }
+    gold_arg_mentions_dicts = {prop_id: [{m_id: str(mention)
+                                          for m_id, mention in mention.argument_mentions.iteritems()}
+                                         for mention in prop.mentions.values()]
+                               for prop_id, prop in gold.propositions.iteritems()}
 
     # Clusters of arguments per proposition
-    gold_arg_mentions = { p_id : [set([mention_dict[str(arg_num)]
-                                         for mention_dict in mention_lst if str(arg_num) in mention_dict])
-                                    for arg_num in range(0, 10)]
-                            for p_id, mention_lst in gold_arg_mentions_dicts.iteritems()}
+    gold_arg_mentions = {p_id: [set([mention_dict[str(arg_num)]
+                                     for mention_dict in mention_lst if str(arg_num) in mention_dict])
+                                for arg_num in range(0, 10)]
+                         for p_id, mention_lst in gold_arg_mentions_dicts.iteritems()}
 
     # Remove empty arguments
     gold_arg_mentions = {k: [s for s in v if len(s) > 0] for k, v in gold_arg_mentions.iteritems()}
@@ -87,8 +87,8 @@ def eval_clusters(gold, arg_clustering):
             continue
 
         muc1, bcubed1, ceaf1 = muc(gold_arg_mentions[prop_id], pred_arg_mentions[prop_id]), \
-                           bcubed(gold_arg_mentions[prop_id], pred_arg_mentions[prop_id]), \
-                           ceaf(gold_arg_mentions[prop_id], pred_arg_mentions[prop_id])
+                               bcubed(gold_arg_mentions[prop_id], pred_arg_mentions[prop_id]), \
+                               ceaf(gold_arg_mentions[prop_id], pred_arg_mentions[prop_id])
         mela1 = np.mean([muc1, bcubed1, ceaf1])
 
         scores.append([muc1, bcubed1, ceaf1, mela1])
@@ -124,4 +124,3 @@ def same_entity(cluster, argument, graph):
         match.append(val)
 
     return all(match)
-

@@ -6,6 +6,7 @@ where non-restrictive arguments were reduced following (Stanovsky and Dagan, 201
 Author: Gabi Stanovsky
 """
 import sys
+
 sys.path.append('../common')
 sys.path.append('../agreement')
 
@@ -20,8 +21,7 @@ from predicate_mention import compute_predicate_mention_agreement
 from predicate_mention import compute_predicate_mention_agreement
 from okr import PropositionMention, Proposition, load_graphs_from_folder
 
-
-logging.basicConfig(level = logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 def evaluate_predicate_mention(test_graphs, prop_ex, nom_file):
@@ -80,7 +80,6 @@ def predict_predicate_mention(test_graph, prop_ex, nom_file=None, apply_verbal=T
     proposition_mentions = []
 
     if nom_file:
-
         # Load nomlex
         logging.debug('Loading nomlex')
         nom_lexicon = [line.split('\t')[0] for line in open(nom_file)]
@@ -92,17 +91,16 @@ def predict_predicate_mention(test_graph, prop_ex, nom_file=None, apply_verbal=T
         indices_and_terms = []
 
         if apply_verbal:
-
             # Extract Verbal - make sure that parser's indices agree with the sentence
             indices_and_terms += filter(lambda (indices, terms): all([(ind < len(sent)) and (sent[ind] == term)
-                                                                      for (ind, term) in zip(indices, terms.split(" "))]),
-                                       prop_ex.get_extractions(' '.join(sent)))
+                                                                      for (ind, term) in
+                                                                      zip(indices, terms.split(" "))]),
+                                        prop_ex.get_extractions(' '.join(sent)))
             indices_and_terms += [([ind], word) for (ind, [word, pos]) in enumerate(nltk.pos_tag(sent))
                                   if pos.startswith('V')]
             logging.debug('Verbal: {}'.format(indices_and_terms))
 
         if apply_non_verbal:
-
             # Add nominalizations through lookup
             noms = [([ind], word) for (ind, word) in enumerate(sent) if word.lower() in nom_lexicon]
             logging.debug('Nominalizations: {}'.format(noms))
@@ -131,8 +129,7 @@ def create_proposition_mention(sent_id, indices, terms):
     return PropositionMention(id=NULL_VALUE,
                               sentence_id=sent_id,
                               indices=indices,  # Indices of words in the template
-                              terms=terms,      # Terms in template
+                              terms=terms,  # Terms in template
                               parent=NULL_VALUE,
                               argument_mentions=NULL_VALUE,
                               is_explicit=True)
-

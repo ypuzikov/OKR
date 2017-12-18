@@ -3,7 +3,6 @@ import bsddb
 
 from spacy.en import English
 
-
 """
 A class for determining whether one predicate template entails the other.
 
@@ -54,7 +53,7 @@ class PredicateEntailmentBaseline:
         # Find the first two arguments from each predicate, and the matching arguments between predicates
         args1 = re.findall(r'(\[a[0-9]+\])', pred1)
         args2 = re.findall(r'(\[a[0-9]+\])', pred2)
-        shared_args = [a for a in args1 if a in args2] # intersection that keeps order
+        shared_args = [a for a in args1 if a in args2]  # intersection that keeps order
 
         # Support only binary predicated
         if len(shared_args) < 2:

@@ -15,6 +15,7 @@ Author: Gabi Stanovsky
 """
 import os
 import sys
+
 sys.path.append('../')
 
 import ntpath
@@ -25,11 +26,10 @@ from glob import glob
 from docopt import docopt
 from parsers.spacy_wrapper import spacy_wrapper
 
-logging.basicConfig(level = logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 def main():
-
     args = docopt(__doc__)
     inp = args['--in']
     out = args['--out']
@@ -60,6 +60,7 @@ class prop_extraction:
     """
     Lenient proposition extraction -- assumes all modifications are non-restrictive
     """
+
     def __init__(self):
         """
         Initalize internal parser
@@ -96,7 +97,6 @@ class prop_extraction:
 
                     # Find if this is the right spot to plug the verb in the template
                     if (curr_arg > verb) and (not extraction.pred_exists):
-
                         extraction.set_predicate(self.parser.get_text(verb), self.parser.get_lemma(verb))
 
                         # Take care of OKR stuff
@@ -109,9 +109,8 @@ class prop_extraction:
                         pobjs = self.parser.get_single_pobj(curr_arg)
 
                         if pobjs:
-
                             # Sanity check
-                            assert(len(pobjs)) == 1
+                            assert (len(pobjs)) == 1
                             pobj = pobjs[0]
 
                             # Plug prep/dative in template and signal that pobj should be added to rolesDict
@@ -144,9 +143,9 @@ class prop_extraction:
                 if okr_pred_indices:
                     okr_pred_terms = okr_pred_terms.strip()
                     if len(okr_pred_indices) != len(okr_pred_terms.split(' ')):
-
                         # Sanity check -- this happens due to Spacy's chunking which messes up indexes
-                        logging.warn("Length of indices and pred differ: {} != {}".format(okr_pred_indices, okr_pred_terms))
+                        logging.warn(
+                            "Length of indices and pred differ: {} != {}".format(okr_pred_indices, okr_pred_terms))
                     okr_ret.append((okr_pred_indices, okr_pred_terms))
         except:
             raise
@@ -158,6 +157,7 @@ class Extraction:
     """
     A representation of an extraction, composed of a single predicate and an arbitrary (>0) number of arguments.
     """
+
     def __init__(self):
         self.args = []
         self.roles_dict = {}
@@ -195,7 +195,7 @@ class Extraction:
         self.lemmatized_template = self.template.replace(self.pred, self.lemmatized_pred)
         ret = '\t'.join([self.template, self.lemmatized_template] +
                         ['A{}\t{}'.format(key, val)
-                         for key, val in sorted(self.roles_dict.iteritems(), key = lambda (k,_): k)])
+                         for key, val in sorted(self.roles_dict.iteritems(), key=lambda (k, _): k)])
         return ret
 
 
@@ -226,7 +226,7 @@ def run_single_file(input_fn, output_fn, prop_ex):
                 sent = data[0]
             logging.info('Read: {}'.format(sent))
             for ex in prop_ex.get_extractions(sent):
-                to_print = '\t'.join(map(str, [tweet_id, sent, ex])).decode('ascii', errors = 'ignore')
+                to_print = '\t'.join(map(str, [tweet_id, sent, ex])).decode('ascii', errors='ignore')
                 f_out.write(to_print + "\n")
                 ex_counter += 1
 
@@ -245,4 +245,3 @@ def path_leaf(path):
 
 if __name__ == '__main__':
     main()
-

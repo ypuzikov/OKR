@@ -72,8 +72,8 @@ def filter_mentions(graph, consensual_mentions):
     consensual_graph = graph.clone()
 
     for prop in consensual_graph.propositions.values():
-        prop.mentions = { id : mention for id, mention in prop.mentions.iteritems()
-                          if str(mention) in consensual_mentions}
+        prop.mentions = {id: mention for id, mention in prop.mentions.iteritems()
+                         if str(mention) in consensual_mentions}
 
         # Remove them also from the entailment graph
         if prop.entailment_graph != NULL_VALUE:
@@ -109,10 +109,12 @@ def extract_consensual_mentions(graph1, graph2):
     # Exclude ignored words
     # TODO: Rachel - document ignored words
     if not graph2.ignored_indices == None:
-        graph1_prop_mentions = set([a for a in graph1_prop_mentions if len(overlap_set(a, graph2.ignored_indices)) == 0])
+        graph1_prop_mentions = set(
+            [a for a in graph1_prop_mentions if len(overlap_set(a, graph2.ignored_indices)) == 0])
 
     if not graph1.ignored_indices == None:
-        graph2_prop_mentions = set([a for a in graph2_prop_mentions if len(overlap_set(a, graph1.ignored_indices)) == 0])
+        graph2_prop_mentions = set(
+            [a for a in graph2_prop_mentions if len(overlap_set(a, graph1.ignored_indices)) == 0])
 
     # Compute the accuracy, each time treating a different annotator as the gold
     consensual_mentions = graph1_prop_mentions.intersection(graph2_prop_mentions)

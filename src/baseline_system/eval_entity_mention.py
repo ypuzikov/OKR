@@ -6,8 +6,8 @@ Author: Rachel Wities
 """
 
 import sys
-sys.path.append('../common')
 
+sys.path.append('../common')
 
 import numpy as np
 
@@ -18,24 +18,27 @@ from nltk.corpus import wordnet as wn
 NOUNS = [u'NNP', u'NN', u'NNS', u'NNPS', u'CD', u'PRP', u'PRP$']
 ADJECTIVES = [u'JJ', u'JJR', u'JJS']
 VERBS = [u'VB', u'VBN', u'VBD', u'VBG', u'VBP']
-GET_ORIGINAL_SCORE=False #set to true to recieve originaly reported score of 0.58
+GET_ORIGINAL_SCORE = False  # set to true to recieve originaly reported score of 0.58
 
 nom_file = 'nominalizations/nominalizations.reuters.txt'
 NOM_LIST = [line.split('\t')[0] for line in open(nom_file)]
 
-
-
 # Don't use spacy tokenizer, because we originally used NLTK to tokenize the files and they are already tokenized
 nlp = English()
+
+
 def replace_tokenizer(nlp):
     old_tokenizer = nlp.tokenizer
     nlp.tokenizer = lambda string: old_tokenizer.tokens_from_list(string.split())
+
+
 if not GET_ORIGINAL_SCORE:
     replace_tokenizer(nlp)
 
-#the old and ugly way to fix the fact that spacy tokenization is not similar to NLTK's:
-def fix_tokenization(string_):	
-	return string_.replace("-","~").replace("'","|")
+
+# the old and ugly way to fix the fact that spacy tokenization is not similar to NLTK's:
+def fix_tokenization(string_):
+    return string_.replace("-", "~").replace("'", "|")
 
 
 def evaluate_entity_mention_single(gold_entities_set, pred_graph):
@@ -65,17 +68,18 @@ def evaluate_entity_mention(test_graphs):
     :return: F1, recall, and precision
     """
 
-
     scores = []
 
     for graph in test_graphs:
 
-	if GET_ORIGINAL_SCORE:
-        	sents = {num: unicode(uncap_sentence(fix_tokenization(' '.join(sentence)))) for num, sentence in graph.sentences.iteritems()}
-	else:
-		sents = {num: unicode(uncap_sentence(' '.join(sentence))) for num, sentence in graph.sentences.iteritems()}
+        if GET_ORIGINAL_SCORE:
+            sents = {num: unicode(uncap_sentence(fix_tokenization(' '.join(sentence)))) for num, sentence in
+                     graph.sentences.iteritems()}
+        else:
+            sents = {num: unicode(uncap_sentence(' '.join(sentence))) for num, sentence in graph.sentences.iteritems()}
 
-	sents = {key: sentence for key, sentence in sents.iteritems() if len(nlp(sentence)) == len(graph.sentences[key])}
+        sents = {key: sentence for key, sentence in sents.iteritems() if
+                 len(nlp(sentence)) == len(graph.sentences[key])}
         # NER entity
         ner_singles = [[s_num, num, tok.ent_iob, tok.tag_] for s_num, sentence in sents.iteritems() for num, tok in
                        enumerate(nlp(sentence)) if tok.ent_iob in [1, 3]]
@@ -175,4 +179,3 @@ def convert_iob_to_seq(ner_iob_annotations):
             sequence[-1][2].append(tag)
 
     return sequence
-

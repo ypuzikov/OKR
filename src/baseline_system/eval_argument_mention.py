@@ -5,6 +5,7 @@ components are syntactically dependent on them.
 Author: Gabi Stanovsky
 """
 import sys
+
 sys.path.append('../common')
 sys.path.append("../agreement")
 
@@ -106,6 +107,6 @@ def get_entity_mention_by_sent_id(graph, sent_id):
     :param sent_id: the sentence ID
     :return all entity mentions in a given sentence
     """
-    return { ent_id : mention for ent_id, ent in graph.entities.iteritems()
-             for mention_id, mention in ent.mentions.iteritems()
-             if mention.sentence_id == sent_id }
+    return {ent_id: mention for ent_id, ent in graph.entities.iteritems()
+            for mention_id, mention in ent.mentions.iteritems()
+            if mention.sentence_id == sent_id}

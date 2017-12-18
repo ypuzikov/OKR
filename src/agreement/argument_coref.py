@@ -28,24 +28,24 @@ def compute_argument_coref_agreement(graph1, graph2, optimal_pred_alignment):
     """
 
     # Get argument mentions
-    graph1_arg_mentions_dicts = { p_id : [{ arg_id : str(arg) for arg_id, arg in mention.argument_mentions.iteritems() }
-                                            for mention in p.mentions.values()]
-                                  for p_id, p in graph1.propositions.iteritems() }
+    graph1_arg_mentions_dicts = {p_id: [{arg_id: str(arg) for arg_id, arg in mention.argument_mentions.iteritems()}
+                                        for mention in p.mentions.values()]
+                                 for p_id, p in graph1.propositions.iteritems()}
 
-    graph2_arg_mentions_dicts = { p_id : [{ arg_id : str(arg) for arg_id, arg in mention.argument_mentions.iteritems() }
-                                            for mention in p.mentions.values()]
-                                  for p_id, p in graph2.propositions.iteritems() }
+    graph2_arg_mentions_dicts = {p_id: [{arg_id: str(arg) for arg_id, arg in mention.argument_mentions.iteritems()}
+                                        for mention in p.mentions.values()]
+                                 for p_id, p in graph2.propositions.iteritems()}
 
     # Clusters of arguments per proposition
-    graph1_arg_mentions = { p_id : [set([mention_dict[str(arg_num)]
-                                         for mention_dict in mention_lst if str(arg_num) in mention_dict])
-                                    for arg_num in range(0, 10)]
-                            for p_id, mention_lst in graph1_arg_mentions_dicts.iteritems()}
+    graph1_arg_mentions = {p_id: [set([mention_dict[str(arg_num)]
+                                       for mention_dict in mention_lst if str(arg_num) in mention_dict])
+                                  for arg_num in range(0, 10)]
+                           for p_id, mention_lst in graph1_arg_mentions_dicts.iteritems()}
 
-    graph2_arg_mentions = { p_id : [set([mention_dict[str(arg_num)]
-                                         for mention_dict in mention_lst if str(arg_num) in mention_dict])
-                                    for arg_num in range(0, 10)]
-                            for p_id, mention_lst in graph2_arg_mentions_dicts.iteritems()}
+    graph2_arg_mentions = {p_id: [set([mention_dict[str(arg_num)]
+                                       for mention_dict in mention_lst if str(arg_num) in mention_dict])
+                                  for arg_num in range(0, 10)]
+                           for p_id, mention_lst in graph2_arg_mentions_dicts.iteritems()}
 
     # Remove empty arguments
     graph1_arg_mentions = {k: [s for s in v if len(s) > 0] for k, v in graph1_arg_mentions.iteritems()}
